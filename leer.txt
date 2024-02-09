@@ -1,0 +1,12 @@
+1.- Creamos el fichero .env dentro de server
+PORT=5000
+USERNAME=root
+PASSWORD=""
+
+2.- Defino el fichero dbService.js dentro de Server
+3.- Lo voy combinando con app.js
+
+4.- defino el fichero index.js dentro de cliente
+
+5.- Para arrancar la parte servidor node app
+6.- Para arrancar la parte cliente me situo sobre el index.html y le doy a "go live" dentro vs code
