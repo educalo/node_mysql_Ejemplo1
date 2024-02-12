@@ -1,12 +1,20 @@
-1.- Creamos el fichero .env dentro de server
-PORT=5000
+0.- Creamos el fichero .env dentro de server
+PORT=3000
 USERNAME=root
-PASSWORD=""
+PASSWORD=''
+DATABASE=agenda
+DB_PORT=3306
+HOST=localhost
 
-2.- Defino el fichero dbService.js dentro de Server
-3.- Lo voy combinando con app.js
+1.- Creo la bd agenda.sql
 
-4.- defino el fichero index.js dentro de cliente
+1.- En el server:.......
+2.- Creo el fichero en el server app.js
+3.- npm install
+4.- node app
+
+5.- En el client:....
+3.- defino el fichero index.js dentro de cliente
 
 5.- Para arrancar la parte servidor node app
 6.- Para arrancar la parte cliente me situo sobre el index.html y le doy a "go live" dentro vs code

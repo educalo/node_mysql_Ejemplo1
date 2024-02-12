@@ -1,8 +1,9 @@
+//El DOMContentLoadedevento se activa cuando el documento HTML se ha analizado por completo y todos los scripts diferido
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('http://localhost:5000/getAll')
+    fetch('http://localhost:3000/getAll')
     .then(response => response.json())
-    .then(data => loadHTMLTable(data['data']));
-    
+    //.then(data => loadHTMLTable(data['data']));
+    .then(data => loadHTMLTable(data));
 });
 
 document.querySelector('table tbody').addEventListener('click', function(event) {
@@ -19,21 +20,31 @@ const searchBtn = document.querySelector('#search-btn');
 
 searchBtn.onclick = function() {
     const searchValue = document.querySelector('#search-input').value;
+    console.log(searchValue)
 
-    fetch('http://localhost:5000/search/' + searchValue)
+    fetch('http://localhost:3000/search/' + searchValue)
     .then(response => response.json())
-    .then(data => loadHTMLTable(data['data']));
+    .then(data => {
+        console.log(data),  
+        loadHTMLTable(data);
+        })
+    
 }
 
 function deleteRowById(id) {
-    fetch('http://localhost:5000/delete/' + id, {
+    fetch('http://localhost:3000/delete/' + id, {
         method: 'DELETE'
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
+        location.reload();
+    //comprobar si puedo saber si se ha hecho la operacion con exito??????????
+    /*
+        if (data.status==200) {
+            //método recarga el documento actual.
             location.reload();
         }
+    */
     });
 }
 
@@ -45,25 +56,34 @@ function handleEditRow(id) {
 
 updateBtn.onclick = function() {
     const updateNameInput = document.querySelector('#update-name-input');
+    
+    //guarda una hora menos????????????????
+    const fecha_act = new Date();
 
 
-    console.log(updateNameInput);
+    //console.log(updateNameInput);
 
-    fetch('http://localhost:5000/update', {
-        method: 'PATCH',
+
+    fetch('http://localhost:3000/update', {
+        method: 'PUT',
         headers: {
             'Content-type' : 'application/json'
         },
         body: JSON.stringify({
-            id: updateNameInput.dataset.id,
-            name: updateNameInput.value
+            id: updateNameInput.dataset.id, 
+            nombre: updateNameInput.value, 
+            fecha_actualizacion: fecha_act
         })
     })
     .then(response => response.json())
     .then(data => {
+        location.reload();
+        //no funciona
+        /*
         if (data.success) {
             location.reload();
         }
+        */
     })
 }
 
@@ -73,17 +93,21 @@ const addBtn = document.querySelector('#add-name-btn');
 addBtn.onclick = function () {
     const nameInput = document.querySelector('#name-input');
     const name = nameInput.value;
+    //me guarda una hora menos, mirar????????
+    const fecha = new Date();
+    const fecha_act = new Date(null);
+    console.log(fecha);
     nameInput.value = "";
 
-    fetch('http://localhost:5000/insert', {
+    fetch('http://localhost:3000/insert', {
         headers: {
             'Content-type': 'application/json'
         },
         method: 'POST',
-        body: JSON.stringify({ name : name})
+        body: JSON.stringify({ nombre : name, fecha_alta: fecha, fecha_actualización : fecha_act})
     })
     .then(response => response.json())
-    .then(data => insertRowIntoTable(data['data']));
+    .then(data => insertRowIntoTable(data));
 }
 
 function insertRowIntoTable(data) {
@@ -93,14 +117,18 @@ function insertRowIntoTable(data) {
 
     let tableHtml = "<tr>";
 
+    //Devuelve un valor booleano que indica si el objeto en el que se llama tiene una propiedad con el nombre del argumento
     for (var key in data) {
         if (data.hasOwnProperty(key)) {
-            if (key === 'dateAdded') {
+            if (key === 'fecha_alta') {
                 data[key] = new Date(data[key]).toLocaleString();
             }
             tableHtml += `<td>${data[key]}</td>`;
+                        
         }
     }
+    //añado a null el valor de la fecha de actualización
+    tableHtml += `<td>${null}</td>`;
 
     tableHtml += `<td><button class="delete-row-btn" data-id=${data.id}>Delete</td>`;
     tableHtml += `<td><button class="edit-row-btn" data-id=${data.id}>Edit</td>`;
@@ -125,12 +153,12 @@ function loadHTMLTable(data) {
 
     let tableHtml = "";
 
-    data.forEach(function ({id, name, date_added}) {
+    data.forEach(function ({id, nombre, fecha_alta,fecha_actualizacion}) {
         tableHtml += "<tr>";
         tableHtml += `<td>${id}</td>`;
-        tableHtml += `<td>${name}</td>`;
-        tableHtml += `<td>${new Date(date_added).toLocaleString()}</td>`;
-        
+        tableHtml += `<td>${nombre}</td>`;
+        tableHtml += `<td>${new Date(fecha_alta).toLocaleString()}</td>`;
+        tableHtml += `<td>${new Date(fecha_actualizacion).toLocaleString()}</td>`;
         tableHtml += `<td><button class="delete-row-btn" data-id=${id}>Delete</td>`;
         tableHtml += `<td><button class="edit-row-btn" data-id=${id}>Edit</td>`;
         tableHtml += "</tr>";
